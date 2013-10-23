@@ -1,33 +1,43 @@
 require 'sinatra'
 require 'sinatra/json'
 require 'json'
+require 'haml'
 require './config'
 
-
 get '/samples' do
-	if request.preferred_type == 'text/html'
-		body "<h1>Html!</h1>"
+	@samples = Sample.all
+	if request.accept? 'text/html'
+		haml :sample_list
 	else
-		json Sample.all
+ 		json @samples
 	end
 end
 
 get '/samples/:attr=:val' do
 	# only allow requests that use a real param
 	if Sample.column_names.include? params[:attr]
-		samples = Sample.where(["#{params[:attr]} = ?", params[:val]])
-		json samples
+		@samples = Sample.where(["#{params[:attr]} = ?", params[:val]])
 	else
 		halt 400
+	end
+
+	if request.accept? 'text/html'
+		haml :sample_list
+	else
+ 		json @samples
 	end
 end
 
 get '/samples/:id' do
-	sample = Sample.find_by_id params[:id]
-	unless sample.nil?
-		sample.to_json.to_str
-	else
+	@sample = Sample.find_by_id params[:id]
+	if @sample.nil?
 		halt 404
+	end
+
+	if request.accept? 'text/html'
+		haml :sample_details
+	else
+ 		json @sample
 	end
 end
 
@@ -50,3 +60,60 @@ after do
 	ActiveRecord::Base.connection.close
 end
 
+__END__
+
+@@ sample_list
+%html
+	%head
+		%title= 'Samples'
+		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+%body{:style => 'padding: 20px 50px'}
+	%table.table
+		%thead
+			%tr
+				%th= '#'
+				%th= 'Species'
+				%th= 'Notes'
+				%th= 'Latitude'
+				%th= 'Longitude'
+		%tbody
+		- @samples.each do |s|
+			%tr
+				%td
+					%a{:href => "/samples/#{s.id}"}= s.id
+				%td= s.species
+				%td= s.notes
+				%td= s.latitude
+				%td= s.longitude
+
+@@ sample_details
+%html
+	%head
+		%title= 'Sample'
+		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%script{:src => 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false'}
+		:javascript
+			var map;
+			function initMap() {
+				var latlong = new google.maps.LatLng(#{@sample.latitude}, #{@sample.longitude}),
+				mapOptions = {
+					zoom: 8,
+					center: latlong,
+					mapTypeId: google.maps.MapTypeId.HYBRID
+				},
+				marker = new google.maps.Marker({
+					position: latlong,
+					title: 'Sample'
+				});
+
+				map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+				marker.setMap(map);
+			}
+			google.maps.event.addDomListener(window, 'load', initMap);
+
+%body{:style => 'padding: 20px 50px'}
+	%h3= @sample.species
+	%p= @sample.notes
+	%br
+	%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
+	#map-canvas{:style => 'height: 400px'}
