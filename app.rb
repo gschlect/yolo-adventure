@@ -91,10 +91,10 @@ __END__
 	%head
 		%title= 'Sample'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%script{:src => '/qrcode.min.js'}
 		%script{:src => 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false'}
 		:javascript
-			var map;
-			function initMap() {
+			function initCanvases() {
 				var latlong = new google.maps.LatLng(#{@sample.latitude}, #{@sample.longitude}),
 				mapOptions = {
 					zoom: 8,
@@ -104,16 +104,22 @@ __END__
 				marker = new google.maps.Marker({
 					position: latlong,
 					title: 'Sample'
-				});
-
+				}),
 				map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-				marker.setMap(map);
-			}
-			google.maps.event.addDomListener(window, 'load', initMap);
 
-%body{:style => 'padding: 20px 50px'}
-	%h3= @sample.species
-	%p= @sample.notes
-	%br
-	%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
-	#map-canvas{:style => 'height: 400px'}
+				marker.setMap(map);
+
+				new QRCode(document.getElementById('qr-canvas'), {
+					text: window.location.href,
+					width: 100,
+					height: 100
+				});
+			}
+			google.maps.event.addDomListener(window, 'load', initCanvases);
+
+	%body{:style => 'padding: 20px 50px'}
+		%h3= @sample.species
+		%p= @sample.notes
+		#qr-canvas{:style => 'height: 100px'}
+		%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
+		#map-canvas{:style => 'height: 400px'}
