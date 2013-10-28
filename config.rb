@@ -5,7 +5,7 @@ if ENV['HEROKU']
 	require 'pg'
 	ActiveRecord::Base.establish_connection(
 		:adapter	=> :postgresql,
-		:encoding	=> unicode,
+		:encoding	=> :unicode,
 		:pool		=> 5,
 		:database	=> 'd7n9rdqjt4bpt4',
 		:username	=> 'cmamqqatznstsf',
