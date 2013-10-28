@@ -1,6 +1,6 @@
 source 'https://rubygems.org' 
 
-gem 'sinatra' 
+gem 'sinatra'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'sinatra-contrib', :require => ['sinatra/json']
