@@ -62,7 +62,6 @@ post '/samples' do
 	# create a new sample
 	Sample.create data
 	status 201
-	json :uri => "http://localhost:4567/samples/#{sample.id}"
 end
 
 # clean up db connection for each request
@@ -101,6 +100,16 @@ __END__
 	%head
 		%title= 'Sample'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%style{:type => 'text/css'}
+			:plain
+				@media print {
+					body .print {
+						display: block !important;
+					}
+					body * {
+						display: none !important;
+					}
+				}
 		%script{:src => 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false'}
 		:javascript
 			function init() {
@@ -123,8 +132,11 @@ __END__
 			google.maps.event.addDomListener(window, 'load', init);
 
 	%body{:style => 'padding: 20px 50px'}
-		%h3= @sample.species
+		%h3.print= @sample.species
 		%p= @sample.notes
-		%img#qrcode{:src => '//chart.apis.google.com/chart?cht=qr&chs=500x500&chld=H|0&chl='}
+		%a.btn.btn-default{:href => '#', :onclick => 'window.print()', :style => 'position: absolute; right: 50px; top: 45px;'}
+			%span.glyphicon.glyphicon-print
+			Print Label
+		%img#qrcode.print{:src => '//chart.apis.google.com/chart?cht=qr&chs=200x200&chld=H|0&chl=', :style => 'display: none;'}
 		%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
 		#map-canvas{:style => 'height: 400px'}
