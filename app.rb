@@ -12,6 +12,12 @@ get '/setup' do
 	Sample.create(:species => 'Pine', :notes => 'This was a good sample.', :latitude => 55, :longitude => -110)
 	Sample.create(:species => 'Oak', :notes => 'Very strong.', :latitude => 24, :longitude => -123)
 	Sample.create(:species => 'Fir', :notes => 'Another fir sample!', :latitude => 33, :longitude => -109)
+	"Added some samples"
+end
+
+get '/reset' do
+	Sample.delete_all
+	"Removed all samples"
 end
 
 get '/samples' do
@@ -76,15 +82,89 @@ __END__
 	%head
 		%title= 'Samples'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%script{:src => 'http://code.jquery.com/jquery-2.0.3.min.js'}
+		%script{:src => 'jquery.sortElements.js'}
+		:css
+			.glyphicon {
+				display: none;
+			}
+			th.sort > .glyphicon {
+				display: inline-block;
+			}
+			th {
+				cursor: pointer;
+			}
+		:javascript
+			function isNumeric(n) {
+				return !isNaN(parseFloat(n)) && isFinite(n);
+			}
+
+			function sort($th){
+				var inverse = $th.children('.glyphicon').hasClass('glyphicon-chevron-down');
+				$('tbody')
+					.find('td')
+					.filter(function(){return $(this).index() === $th.index()})
+					.sortElements(function(a, b){
+						a = $.text([a]);
+						b = $.text([b]);
+						if(isNumeric(a) && isNumeric(b)){
+							a = parseFloat(a);
+							b = parseFloat(b);
+						}
+						if(a == b)
+							return 0;
+						else if(a > b)
+							return (inverse ? -1 : 1);
+						else
+							return (inverse ? 1 : -1);
+					}, function(){
+						return this.parentNode;
+					});
+			}
+
+			$(document).on('ready', function(){
+				$('thead').on('click', 'th:not(.sort)', function(e){
+					e.stopPropagation();
+					$(this)
+						.addClass('sort')
+						.siblings()
+						.removeClass('sort');
+					sort($(this));
+				})
+
+				$('table').on('click', 'th.sort', function(){
+					$(this)
+						.children('.glyphicon')
+						.toggleClass('glyphicon-chevron-up')
+						.toggleClass('glyphicon-chevron-down');
+					sort($(this));
+				})
+			});
+
 %body{:style => 'padding: 20px 50px'}
-	%table.table
+	%table.table.table-hover.table-bordered
 		%thead
 			%tr
-				%th= '#'
-				%th= 'Species'
-				%th= 'Notes'
-				%th= 'Latitude'
-				%th= 'Longitude'
+				%th.sort
+					:plain
+						#
+					%span.glyphicon.glyphicon-chevron-up.pull-right
+				%th
+					:plain
+						Species
+					%span.glyphicon.glyphicon-chevron-up.pull-right
+				%th
+					:plain
+						Notes
+					%span.glyphicon.glyphicon-chevron-up.pull-right
+				%th
+					:plain
+						Latitude
+					%span.glyphicon.glyphicon-chevron-up.pull-right
+				%th
+					:plain
+						Longitude
+					%span.glyphicon.glyphicon-chevron-up.pull-right
 		%tbody
 		- @samples.each do |s|
 			%tr
@@ -100,16 +180,15 @@ __END__
 	%head
 		%title= 'Sample'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
-		%style{:type => 'text/css'}
-			:plain
-				@media print {
-					body .print {
-						display: block !important;
-					}
-					body * {
-						display: none !important;
-					}
+		:css
+			@media print {
+				body .print {
+					display: block !important;
 				}
+				body * {
+					display: none !important;
+				}
+			}
 		%script{:src => 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false'}
 		:javascript
 			function init() {
