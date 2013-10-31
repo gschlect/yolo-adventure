@@ -21,6 +21,7 @@ get '/reset' do
 end
 
 get '/samples' do
+	@species = 'All'
 	@samples = Sample.all
 	if request.accept? 'text/html'
 		haml :sample_list
@@ -30,6 +31,10 @@ get '/samples' do
 end
 
 get '/samples/:attr=:val' do
+	if params[:attr] == 'species'
+		@species = params[:val]
+	end
+
 	# only allow requests that use a real param
 	if Sample.column_names.include? params[:attr]
 		@samples = Sample.where(["#{params[:attr]} = ?", params[:val]])
@@ -83,7 +88,8 @@ __END__
 		%title= 'Samples'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
 		%script{:src => 'http://code.jquery.com/jquery-2.0.3.min.js'}
-		%script{:src => 'jquery.sortElements.js'}
+		%script{:src => '/jquery.sortElements.js'}
+		%script{:src => '/sort.js'}
 		:css
 			.glyphicon {
 				display: none;
@@ -93,56 +99,25 @@ __END__
 			}
 			th {
 				cursor: pointer;
+				font-weight: bold;
 			}
-		:javascript
-			function isNumeric(n) {
-				return !isNaN(parseFloat(n)) && isFinite(n);
+			.form-control:focus {
+				border-color: default;
+				box-shadow: none;
+				-webkit-box-shadow: none;
 			}
-
-			function sort($th){
-				var inverse = $th.children('.glyphicon').hasClass('glyphicon-chevron-down');
-				$('tbody')
-					.find('td')
-					.filter(function(){return $(this).index() === $th.index()})
-					.sortElements(function(a, b){
-						a = $.text([a]);
-						b = $.text([b]);
-						if(isNumeric(a) && isNumeric(b)){
-							a = parseFloat(a);
-							b = parseFloat(b);
-						}
-						if(a == b)
-							return 0;
-						else if(a > b)
-							return (inverse ? -1 : 1);
-						else
-							return (inverse ? 1 : -1);
-					}, function(){
-						return this.parentNode;
-					});
-			}
-
-			$(document).on('ready', function(){
-				$('thead').on('click', 'th:not(.sort)', function(e){
-					e.stopPropagation();
-					$(this)
-						.addClass('sort')
-						.siblings()
-						.removeClass('sort');
-					sort($(this));
-				})
-
-				$('table').on('click', 'th.sort', function(){
-					$(this)
-						.children('.glyphicon')
-						.toggleClass('glyphicon-chevron-up')
-						.toggleClass('glyphicon-chevron-down');
-					sort($(this));
-				})
-			});
 
 %body{:style => 'padding: 20px 50px'}
-	%table.table.table-hover.table-bordered
+	%h3= 'Samples'
+
+	%ul.nav.nav-pills{:style => 'margin-top: 20px; margin-bottom: 30px;'}
+		%li{:class => (@species == 'All' ? 'active' : '')}
+			%a{:href => "/samples"}= 'All'
+		- Sample.select(:species).distinct.each do |s|
+			%li{:class => (s.species == @species ? 'active' : '')}
+				%a{:href => "/samples/species=#{s.species}"}= s.species
+
+	%table.table.table-hover.table-bordered.sortable
 		%thead
 			%tr
 				%th.sort
