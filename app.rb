@@ -12,12 +12,12 @@ get '/setup' do
 	Sample.create(:species => 'Pine', :notes => 'This was a good sample.', :latitude => 55, :longitude => -110)
 	Sample.create(:species => 'Oak', :notes => 'Very strong.', :latitude => 24, :longitude => -123)
 	Sample.create(:species => 'Fir', :notes => 'Another fir sample!', :latitude => 33, :longitude => -109)
-	"Added some samples"
+	redirect to('/samples')
 end
 
 get '/reset' do
 	Sample.delete_all
-	"Removed all samples"
+	redirect to('/samples')
 end
 
 get '/' do
