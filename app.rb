@@ -20,45 +20,21 @@ get '/reset' do
 	"Removed all samples"
 end
 
-get '/samples' do
-	@species = 'All'
-	@samples = Sample.all
-	if request.accept? 'text/html'
-		haml :sample_list
-	else
- 		json @samples
-	end
-end
+get '/samples.?:format?' do
+	filters = request.env['rack.request.query_hash']
 
-get '/samples/:attr=:val' do
-	if params[:attr] == 'species'
-		@species = params[:val]
-	end
+	if (filters.keys - Sample.column_names).empty?
+		samples = Sample.find(:all, :conditions => filters)
 
-	# only allow requests that use a real param
-	if Sample.column_names.include? params[:attr]
-		@samples = Sample.where(["#{params[:attr]} = ?", params[:val]])
+		if params[:format] == 'json'
+			json samples
+		else
+			@samples = samples
+			@species = request[:species] || 'All'
+			haml :sample_list
+		end
 	else
 		halt 400
-	end
-
-	if request.accept? 'text/html'
-		haml :sample_list
-	else
- 		json @samples
-	end
-end
-
-get '/samples/:id' do
-	@sample = Sample.find_by_id params[:id]
-	if @sample.nil?
-		halt 404
-	end
-
-	if request.accept? 'text/html'
-		haml :sample_details
-	else
- 		json @sample
 	end
 end
 
@@ -73,6 +49,43 @@ post '/samples' do
 	# create a new sample
 	Sample.create data
 	status 201
+end
+
+delete '/samples.?:format?' do 
+	filters = request.env['rack.request.query_hash']
+
+	if (filters.keys - Sample.column_names).empty?
+		Sample.destroy_all(filters)
+		halt 204
+	else
+		halt 400
+	end
+end
+
+get '/samples/:id.?:format?' do
+	sample = Sample.find_by_id params[:id]
+
+	if sample.nil?
+		halt 404
+	end
+
+	if params[:format] == 'json'
+		json sample
+	else
+		@sample = sample
+		haml :sample_details
+	end
+end
+
+delete '/samples/:id.?:format?' do 
+	sample = Sample.find_by_id params[:id]
+
+	if sample.nil?
+		halt 404
+	end
+
+	sample.destroy
+	halt 204
 end
 
 # clean up db connection for each request
@@ -115,7 +128,7 @@ __END__
 			%a{:href => "/samples"}= 'All'
 		- Sample.select(:species).distinct.each do |s|
 			%li{:class => (s.species == @species ? 'active' : '')}
-				%a{:href => "/samples/species=#{s.species}"}= s.species
+				%a{:href => "/samples?species=#{s.species}"}= s.species
 
 	%table.table.table-hover.table-bordered.sortable
 		%thead
