@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 
 if ENV['HEROKU']
+	require 'newrelic_rpm'
 	require 'pg'
 	ActiveRecord::Base.establish_connection(
 		:adapter	=> :postgresql,
