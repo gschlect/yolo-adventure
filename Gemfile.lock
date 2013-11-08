@@ -26,6 +26,7 @@ GEM
     json (1.8.1)
     minitest (4.7.5)
     multi_json (1.8.2)
+    newrelic_rpm (3.6.9.171)
     pg (0.17.0)
     rack (1.5.2)
     rack-protection (1.5.1)
@@ -59,6 +60,7 @@ DEPENDENCIES
   activerecord
   haml
   json
+  newrelic_rpm
   pg
   sinatra
   sinatra-activerecord
