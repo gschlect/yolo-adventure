@@ -100,85 +100,62 @@ __END__
 	%head
 		%title= 'Samples'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%link{:href => '/app.css', :rel => 'stylesheet'}
 		%script{:src => 'http://code.jquery.com/jquery-2.0.3.min.js'}
 		%script{:src => '/jquery.sortElements.js'}
 		%script{:src => '/sort.js'}
 		%meta{:name => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;'}
-		:css
-			.glyphicon {
-				display: none;
-			}
-			th.sort > .glyphicon {
-				display: inline-block;
-			}
-			th {
-				cursor: pointer;
-				font-weight: bold;
-			}
-			.form-control:focus {
-				border-color: default;
-				box-shadow: none;
-				-webkit-box-shadow: none;
-			}
 
-%body{:style => 'padding: 20px 50px'}
-	%h3= 'Samples'
+	%body
+		%h3= 'Samples'
 
-	%ul.nav.nav-pills{:style => 'margin-top: 20px; margin-bottom: 30px;'}
-		%li{:class => (@species == 'All' ? 'active' : '')}
-			%a{:href => "/samples"}= 'All'
-		- Sample.select(:species).distinct.each do |s|
-			%li{:class => (s.species == @species ? 'active' : '')}
-				%a{:href => "/samples?species=#{s.species}"}= s.species
+		%ul.nav.nav-pills
+			%li{:class => (@species == 'All' ? 'active' : '')}
+				%a{:href => "/samples"}= 'All'
+			- Sample.select(:species).distinct.each do |s|
+				%li{:class => (s.species == @species ? 'active' : '')}
+					%a{:href => "/samples?species=#{s.species}"}= s.species
 
-	%table.table.table-hover.table-bordered.sortable
-		%thead
-			%tr
-				%th.sort
-					:plain
-						#
-					%span.glyphicon.glyphicon-chevron-up.pull-right
-				%th
-					:plain
-						Species
-					%span.glyphicon.glyphicon-chevron-up.pull-right
-				%th
-					:plain
-						Notes
-					%span.glyphicon.glyphicon-chevron-up.pull-right
-				%th
-					:plain
-						Latitude
-					%span.glyphicon.glyphicon-chevron-up.pull-right
-				%th
-					:plain
-						Longitude
-					%span.glyphicon.glyphicon-chevron-up.pull-right
-		%tbody
-		- @samples.each do |s|
-			%tr
-				%td
-					%a{:href => "/samples/#{s.id}"}= s.id
-				%td= s.species
-				%td= s.notes
-				%td= s.latitude
-				%td= s.longitude
+		%table.table.table-hover.table-bordered.sortable
+			%thead
+				%tr
+					%th.sort
+						:plain
+							#
+						%span.glyphicon.glyphicon-chevron-up.pull-right
+					%th
+						:plain
+							Species
+						%span.glyphicon.glyphicon-chevron-up.pull-right
+					%th
+						:plain
+							Notes
+						%span.glyphicon.glyphicon-chevron-up.pull-right
+					%th
+						:plain
+							Latitude
+						%span.glyphicon.glyphicon-chevron-up.pull-right
+					%th
+						:plain
+							Longitude
+						%span.glyphicon.glyphicon-chevron-up.pull-right
+			%tbody
+			- @samples.each do |s|
+				%tr
+					%td
+						%a{:href => "/samples/#{s.id}"}= s.id
+					%td= s.species
+					%td= s.notes
+					%td= s.latitude
+					%td= s.longitude
 
 @@ sample_details
 %html
 	%head
 		%title= 'Sample'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%link{:href => '/app.css', :rel => 'stylesheet'}
 		%meta{:name => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;'}
-		:css
-			@media print {
-				body .print {
-					display: block !important;
-				}
-				body * {
-					display: none !important;
-				}
-			}
 		%script{:src => 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false'}
 		:javascript
 			function init() {
@@ -200,13 +177,13 @@ __END__
 			}
 			google.maps.event.addDomListener(window, 'load', init);
 
-	%body{:style => 'padding: 20px 50px'}
+	%body
 		%h3.print= @sample.species
 		%h4.print{:style => 'display: none;'}= "Sample ID: #{@sample.id}"
 		%p= @sample.notes
-		%a.btn.btn-default{:href => '#', :onclick => 'window.print()', :style => 'position: absolute; right: 50px; top: 45px;'}
+		%a#printer.btn.btn-default{:href => '#', :onclick => 'window.print()'}
 			%span.glyphicon.glyphicon-print
 			Print Label
 		%img#qrcode.print{:src => '//chart.apis.google.com/chart?cht=qr&chs=200x200&chld=H|0&chl=', :style => 'display: none;'}
 		%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
-		#map-canvas{:style => 'height: 400px;'}
+		#map-canvas
