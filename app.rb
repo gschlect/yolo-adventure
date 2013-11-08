@@ -200,6 +200,7 @@ __END__
 
 	%body{:style => 'padding: 20px 50px'}
 		%h3.print= @sample.species
+		%h4.print{:style => 'display: none;'}= "Sample ID: #{@sample.id}"
 		%p= @sample.notes
 		%a.btn.btn-default{:href => '#', :onclick => 'window.print()', :style => 'position: absolute; right: 50px; top: 45px;'}
 			%span.glyphicon.glyphicon-print
