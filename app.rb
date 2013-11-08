@@ -20,6 +20,10 @@ get '/reset' do
 	"Removed all samples"
 end
 
+get '/' do
+	redirect to('/samples')
+end
+
 get '/samples.?:format?' do
 	filters = request.env['rack.request.query_hash']
 
