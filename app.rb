@@ -186,7 +186,7 @@ __END__
 		%h4.print{:style => 'display: none;'}= "Sample ID: #{@sample.id}"
 		%p= @sample.notes
 		%a#printer.btn.btn-default{:href => '#', :onclick => 'window.print()'}
-			%span.glyphicon.glyphicon-print
+			%span.glyphicon.glyphicon-print{:style => 'display: inline-block;'}
 			Print Label
 		%img#qrcode.print{:src => '//chart.apis.google.com/chart?cht=qr&chs=200x200&chld=H|0&chl=', :style => 'display: none;'}
 		%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
