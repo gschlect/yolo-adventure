@@ -116,7 +116,7 @@ __END__
 				%li{:class => (s.species == @species ? 'active' : '')}
 					%a{:href => "/samples?species=#{s.species}"}= s.species
 		%div.table-responsive
-			%table.table.table-hover.table-bordered.sortable
+			%table.table.table-bordered.sortable
 				%thead
 					%tr
 						%th.sort
