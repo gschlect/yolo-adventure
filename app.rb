@@ -103,6 +103,7 @@ __END__
 		%script{:src => 'http://code.jquery.com/jquery-2.0.3.min.js'}
 		%script{:src => '/jquery.sortElements.js'}
 		%script{:src => '/sort.js'}
+		%meta{:name => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;'}
 		:css
 			.glyphicon {
 				display: none;
@@ -168,6 +169,7 @@ __END__
 	%head
 		%title= 'Sample'
 		%link{:href => '//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', :rel => 'stylesheet'}
+		%meta{:name => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;'}
 		:css
 			@media print {
 				body .print {
@@ -207,4 +209,4 @@ __END__
 			Print Label
 		%img#qrcode.print{:src => '//chart.apis.google.com/chart?cht=qr&chs=200x200&chld=H|0&chl=', :style => 'display: none;'}
 		%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"
-		#map-canvas{:style => 'height: 400px'}
+		#map-canvas{:style => 'height: 400px;'}
