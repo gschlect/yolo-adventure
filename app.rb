@@ -115,39 +115,39 @@ __END__
 			- Sample.select(:species).distinct.each do |s|
 				%li{:class => (s.species == @species ? 'active' : '')}
 					%a{:href => "/samples?species=#{s.species}"}= s.species
-
-		%table.table.table-hover.table-bordered.table-responsive.sortable
-			%thead
-				%tr
-					%th.sort
-						:plain
-							#
-						%span.glyphicon.glyphicon-chevron-up.pull-right
-					%th
-						:plain
-							Species
-						%span.glyphicon.glyphicon-chevron-up.pull-right
-					%th
-						:plain
-							Notes
-						%span.glyphicon.glyphicon-chevron-up.pull-right
-					%th
-						:plain
-							Latitude
-						%span.glyphicon.glyphicon-chevron-up.pull-right
-					%th
-						:plain
-							Longitude
-						%span.glyphicon.glyphicon-chevron-up.pull-right
-			%tbody
-			- @samples.each do |s|
-				%tr
-					%td
-						%a{:href => "/samples/#{s.id}"}= s.id
-					%td= s.species
-					%td= s.notes
-					%td= s.latitude
-					%td= s.longitude
+		%div.table-responsive
+			%table.table.table-hover.table-bordered.sortable
+				%thead
+					%tr
+						%th.sort
+							:plain
+								#
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+						%th
+							:plain
+								Species
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+						%th
+							:plain
+								Notes
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+						%th
+							:plain
+								Latitude
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+						%th
+							:plain
+								Longitude
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+				%tbody
+				- @samples.each do |s|
+					%tr
+						%td
+							%a{:href => "/samples/#{s.id}"}= s.id
+						%td= s.species
+						%td= s.notes
+						%td= s.latitude
+						%td= s.longitude
 
 @@ sample_details
 %html
