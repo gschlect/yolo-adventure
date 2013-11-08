@@ -1,0 +1,52 @@
+body {
+	padding: 20px 50px;
+}
+
+#printer {
+	position: absolute; 
+	right: 50px; 
+	top: 45px;
+}
+
+#map-canvas {
+	height: 400px;
+}
+
+.nav-pills {
+	margin-top: 20px; 
+	margin-bottom: 30px;
+}
+
+.glyphicon {
+	display: none;
+}
+
+th.sort > .glyphicon {
+	display: inline-block;
+}
+
+th {
+	cursor: pointer;
+	font-weight: bold;
+}
+
+@media only screen and (max-width: 767px) {
+	body {
+		padding: 10px 20px;
+	}
+
+	#printer {
+		right: 20px;
+		top: 30px;
+	}
+}
+
+
+@media print {
+	body .print {
+		display: block !important;
+	}
+	body * {
+		display: none !important;
+	}
+}
