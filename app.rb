@@ -2,16 +2,38 @@ require 'sinatra'
 require 'sinatra/json'
 require 'json'
 require 'haml'
+require "net/http"
+require "uri"
 require './config'
 
+def getWeather(sample)
+	uri = URI.parse("http://api.wunderground.com/api/f3f4b515966e7d0f/history_#{sample.date_collected.to_s.tr('-', '')}/q/#{sample.latitude},#{sample.longitude}.json")
+	print "http://api.wunderground.com/api/f3f4b515966e7d0f/history_#{sample.date_collected.to_s.tr('-', '')}/q/#{sample.latitude},#{sample.longitude}.json"
+	http = Net::HTTP.new(uri.host, uri.port)
+	request = Net::HTTP::Get.new(uri.request_uri)
+	
+	response = http.request(request)
+	
+	if response.code == "200"
+		data = JSON.parse response.body
+		if !data['response']['error'].nil?
+			return nil
+		end
+		return data['history']['dailysummary'][0]
+	else
+		return nil
+	end
+end
+
+
 get '/setup' do
-	Sample.create(:species => 'Maple', :notes => 'Nothing interesting.', :latitude => 46, :longitude => -117)
-	Sample.create(:species => 'Fir', :notes => 'A bit interesting.', :latitude => 43, :longitude => -120)
-	Sample.create(:species => 'Spruce', :notes => 'Boring.', :latitude => 42, :longitude => -119)
-	Sample.create(:species => 'Birch', :notes => 'This was a bad sample.', :latitude => 51, :longitude => -100)
-	Sample.create(:species => 'Pine', :notes => 'This was a good sample.', :latitude => 55, :longitude => -110)
-	Sample.create(:species => 'Oak', :notes => 'Very strong.', :latitude => 24, :longitude => -123)
-	Sample.create(:species => 'Fir', :notes => 'Another fir sample!', :latitude => 33, :longitude => -109)
+	Sample.create(:species => 'Maple', :notes => 'Nothing interesting.', :latitude => 46, :longitude => -117, :date_collected => '2012-06-15')
+	Sample.create(:species => 'Fir', :notes => 'A bit interesting.', :latitude => 43, :longitude => -120, :date_collected => '2012-07-01')
+	Sample.create(:species => 'Spruce', :notes => 'Boring.', :latitude => 42, :longitude => -119, :date_collected => '2012-08-16')
+	Sample.create(:species => 'Birch', :notes => 'This was a bad sample.', :latitude => 51, :longitude => -100, :date_collected => '2011-05-09')
+	Sample.create(:species => 'Pine', :notes => 'This was a good sample.', :latitude => 55, :longitude => -110, :date_collected => '2012-01-15')
+	Sample.create(:species => 'Oak', :notes => 'Very strong.', :latitude => 24, :longitude => -123, :date_collected => '2012-12-12')
+	Sample.create(:species => 'Fir', :notes => 'Another fir sample!', :latitude => 33, :longitude => -109, :date_collected => '2012-03-23')
 	redirect to('/samples')
 end
 
@@ -77,6 +99,7 @@ get '/samples/:id.?:format?' do
 		json sample
 	else
 		@sample = sample
+		@weather = getWeather(sample)
 		haml :sample_details
 	end
 end
@@ -129,6 +152,10 @@ __END__
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 						%th
 							:plain
+								Date
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+						%th
+							:plain
 								Species
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 						%th
@@ -148,6 +175,7 @@ __END__
 					%tr
 						%td
 							%a{:href => "/samples/#{s.id}"}= s.id
+						%td= s.date_collected
 						%td= s.species
 						%td= s.notes
 						%td= s.latitude
@@ -184,9 +212,11 @@ __END__
 	%body
 		%h3.print= @sample.species
 		%h4.print{:style => 'display: none;'}= "Sample ID: #{@sample.id}"
+		%p= @weather.nil? ? 'Weather Data Unavailable' : "#{@weather['meantempi']} &deg;F"
+		%p= @sample[:date_collected]
 		%p= @sample.notes
 		%a#printer.btn.btn-default{:href => '#', :onclick => 'window.print()'}
-			%span.glyphicon.glyphicon-print{:style => 'display: inline-block;'}
+			%span.glyphicon.glyphicon-print
 			Print Label
 		%img#qrcode.print{:src => '//chart.apis.google.com/chart?cht=qr&chs=200x200&chld=H|0&chl=', :style => 'display: none;'}
 		%h5= "#{@sample.latitude.abs}&deg; #{@sample.latitude > 0 ? 'N' : 'S'}, #{@sample.longitude.abs}&deg; #{@sample.longitude > 0 ? 'E' : 'W'}"

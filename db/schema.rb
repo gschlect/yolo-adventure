@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131028045554) do
+ActiveRecord::Schema.define(version: 20131111053354) do
 
   create_table "samples", force: true do |t|
     t.string  "species"
     t.text    "notes"
     t.decimal "latitude"
     t.decimal "longitude"
+    t.date    "date_collected"
   end
 
 end
