@@ -8,7 +8,7 @@ require './config'
 
 def getWeather(sample)
 	uri = URI.parse("http://api.wunderground.com/api/f3f4b515966e7d0f/history_#{sample.date_collected.to_s.tr('-', '')}/q/#{sample.latitude},#{sample.longitude}.json")
-	print "http://api.wunderground.com/api/f3f4b515966e7d0f/history_#{sample.date_collected.to_s.tr('-', '')}/q/#{sample.latitude},#{sample.longitude}.json"
+
 	http = Net::HTTP.new(uri.host, uri.port)
 	request = Net::HTTP::Get.new(uri.request_uri)
 	
