@@ -7,6 +7,7 @@ gem 'sinatra-contrib', :require => ['sinatra/json']
 gem 'json'
 gem 'haml'
 gem 'newrelic_rpm'
+gem 'forecast_io'
 
 group :development do
 	gem 'sqlite3'

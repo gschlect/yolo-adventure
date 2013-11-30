@@ -7,21 +7,11 @@ require "uri"
 require './config'
 
 def getWeather(sample)
-	uri = URI.parse("http://api.wunderground.com/api/f3f4b515966e7d0f/history_#{sample.date_collected.to_s.tr('-', '')}/q/#{sample.latitude},#{sample.longitude}.json")
-
-	http = Net::HTTP.new(uri.host, uri.port)
-	request = Net::HTTP::Get.new(uri.request_uri)
-	
-	response = http.request(request)
-	
-	if response.code == "200"
-		data = JSON.parse response.body
-		if !data['response']['error'].nil?
-			return nil
-		end
-		return data['history']['dailysummary'][0]
-	else
+	f = ForecastIO.forecast(sample.latitude, sample.longitude, {:time => sample.date_collected.to_time.to_i})
+	if f.daily.nil?
 		return nil
+	else
+		return f.daily.data[0]
 	end
 end
 
@@ -50,7 +40,7 @@ get '/samples.?:format?' do
 	filters = request.env['rack.request.query_hash']
 
 	if (filters.keys - Sample.column_names).empty?
-		samples = Sample.find(:all, :conditions => filters)
+		samples = Sample.all(:conditions => filters)
 
 		if params[:format] == 'json'
 			json samples
@@ -212,9 +202,17 @@ __END__
 	%body
 		%h3.print= @sample.species
 		%h4.print{:style => 'display: none;'}= "Sample ID: #{@sample.id}"
-		%p= @weather.nil? ? 'Weather Data Unavailable' : "#{@weather['meantempi']} &deg;F"
-		%p= @sample[:date_collected]
-		%p= @sample.notes
+		%p= @sample[:date_collected].strftime('%B %-d, %Y')
+		- if not @weather.nil?
+			%img.weatherimg{:width => '64px', :src => "/svg/#{@weather.icon}.svg"}
+			%span.temp
+				= @weather.temperatureMax.round
+				%span.temp-label= "&deg;F"
+			%p= @weather.summary
+		- else
+			%p
+				Weather Data Unavailable
+		%p.notes= @sample.notes
 		%a#printer.btn.btn-default{:href => '#', :onclick => 'window.print()'}
 			%span.glyphicon.glyphicon-print
 			Print Label

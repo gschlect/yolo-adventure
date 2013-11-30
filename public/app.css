@@ -30,6 +30,24 @@ th {
 	font-weight: bold;
 }
 
+.temp {
+	font-size: 28px;
+	height: 41px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.temp-label {
+	font-size: 20px;
+	margin-left: -8px;
+}
+
+.notes {
+	font-style: italic;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
 @media only screen and (max-width: 767px) {
 	body {
 		padding: 10px 20px;

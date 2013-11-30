@@ -1,5 +1,8 @@
 require 'sinatra'
 require 'sinatra/activerecord'
+require 'forecast_io'
+
+ForecastIO.api_key = 'fcc473ab558edba2dd7cf4589bdf58de'
 
 if ENV['HEROKU']
 	require 'newrelic_rpm'
