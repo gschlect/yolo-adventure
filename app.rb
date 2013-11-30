@@ -165,7 +165,7 @@ __END__
 					%tr
 						%td
 							%a{:href => "/samples/#{s.id}"}= s.id
-						%td= s.date_collected
+						%td{'data-sortval' => s.date_collected}= s.date_collected.strftime('%b %-d, %Y')
 						%td= s.species
 						%td= s.notes
 						%td= s.latitude

@@ -8,8 +8,8 @@ function sort($th){
 		.find('td')
 		.filter(function(){return $(this).index() === $th.index()})
 		.sortElements(function(a, b){
-			a = $.text([a]);
-			b = $.text([b]);
+			a = typeof $(a).data('sortval') != 'undefined' ? $(a).data('sortval') : $.text([a]);
+			b = typeof $(b).data('sortval') != 'undefined' ? $(b).data('sortval') : $.text([b]);
 			if(isNumeric(a) && isNumeric(b)){
 				a = parseFloat(a);
 				b = parseFloat(b);
