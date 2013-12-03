@@ -63,8 +63,13 @@ post '/samples' do
 	end
 
 	# create a new sample
-	Sample.create data
-	status 201
+	if (Sample.column_names - (data.keys << 'id')).empty?
+		Sample.create data
+		status 201
+	else
+		status 400
+	end
+
 end
 
 delete '/samples.?:format?' do 
