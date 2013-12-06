@@ -152,7 +152,7 @@ __END__
 						%th{:style => 'width: 180px;'}
 							Species
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th
+						%th{:style => 'min-width: 200px;'}
 							Notes
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 						%th{:style => 'width: 78px;'}
