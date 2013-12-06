@@ -158,7 +158,7 @@ __END__
 						%th.hidden-xs{:style => 'width: 78px;'}
 							Latitude
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th{:style => 'width: 93px;'}
+						%th.hidden-xs{:style => 'width: 93px;'}
 							Longitude
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 				%tbody
