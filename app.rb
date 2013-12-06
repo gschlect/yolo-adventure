@@ -220,7 +220,7 @@ __END__
 		%h4{:style => 'margin-top: 20px; margin-bottom: 0px;'}
 			Notes:
 		%p.notes= @sample.notes
-		%a#printer.btn.btn-default{:href => '#', :onclick => 'window.print()'}
+		%a#printer.btn.btn-default.hidden-xs{:href => '#', :onclick => 'window.print()'}
 			%span.glyphicon.glyphicon-print
 			Print Label
 		%img#qrcode.print{:src => '//chart.apis.google.com/chart?cht=qr&chs=200x200&chld=H|0&chl=', :style => 'display: none;'}
