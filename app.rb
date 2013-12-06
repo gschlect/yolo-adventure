@@ -8,7 +8,7 @@ require './config'
 
 def getWeather(sample)
 	f = ForecastIO.forecast(sample.latitude, sample.longitude, {:time => sample.date_collected.to_time.to_i})
-	if f.daily.nil?
+	if f.nil? or f.daily.nil?
 		return nil
 	else
 		return f.daily.data[0]
@@ -17,13 +17,14 @@ end
 
 
 get '/setup' do
-	Sample.create(:species => 'Maple', :notes => 'Nothing interesting.', :latitude => 46, :longitude => -117, :date_collected => '2012-06-15')
-	Sample.create(:species => 'Fir', :notes => 'A bit interesting.', :latitude => 43, :longitude => -120, :date_collected => '2012-07-01')
-	Sample.create(:species => 'Spruce', :notes => 'Boring.', :latitude => 42, :longitude => -119, :date_collected => '2012-08-16')
-	Sample.create(:species => 'Birch', :notes => 'This was a bad sample.', :latitude => 51, :longitude => -100, :date_collected => '2011-05-09')
-	Sample.create(:species => 'Pine', :notes => 'This was a good sample.', :latitude => 55, :longitude => -110, :date_collected => '2012-01-15')
-	Sample.create(:species => 'Oak', :notes => 'Very strong.', :latitude => 24, :longitude => -123, :date_collected => '2012-12-12')
-	Sample.create(:species => 'Fir', :notes => 'Another fir sample!', :latitude => 33, :longitude => -109, :date_collected => '2012-03-23')
+	Sample.create(:species => 'Maple', :notes => 'Ex dolorem accumsan voluptaria eum. Ea vel soleat officiis luptatum, ut eum porro partem voluptatum, probatus oportere percipitur eu duo.', :latitude => 46, :longitude => -117, :date_collected => '2012-06-15')
+	Sample.create(:species => 'Fir', :notes => 'Usu ea scripta detracto repudiare. Nam id quidam suscipiantur, recteque salutatus ne sea, sed in labitur prodesset.', :latitude => 43, :longitude => -120, :date_collected => '2012-07-01')
+	Sample.create(:species => 'Spruce', :notes => 'Inani fastidii et vix, ut duo debitis accusata. Omnes possit duo ex, no elitr iuvaret his, sale option nusquam est in.', :latitude => 42, :longitude => -119, :date_collected => '2012-08-16')
+	Sample.create(:species => 'Birch', :notes => 'Ex magna harum sed, sit id veritus suscipit. Te soluta suscipit vis. Altera melius propriae sit ad, cum an novum liber aliquid, mei et virtute sapientem.', :latitude => 51, :longitude => -100, :date_collected => '2011-05-09')
+	Sample.create(:species => 'Pine', :notes => 'Lorem ipsum dolor sit amet, an munere doming expetendis est. Vis viderer singulis aliquando et, an pro detraxit suscipiantur conclusionemque. Augue vocibus ut vis, id cum impetus scripta dolores, deleniti gubergren delicatissimi te usu. Mel ea nulla feugait, eam ex recteque gloriatur, ne brute volutpat mel.', :latitude => 55, :longitude => -110, :date_collected => '2012-01-15')
+	Sample.create(:species => 'Oak', :notes => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', :latitude => 24, :longitude => -123, :date_collected => '2012-12-12')
+	Sample.create(:species => 'Fir', :notes => 'Another fir sample! We got two.', :latitude => 33, :longitude => -109, :date_collected => '2012-03-23')
+	Sample.create(:species => 'Pine', :notes => 'This is a long note, that has something to do with this interesting sample of pine. This sample was taken from a strange time and place, so we don\'t have weather data for it.', :latitude => 175, :longitude => 175, :date_collected => '2013-12-04')
 	redirect to('/samples')
 end
 
@@ -138,32 +139,27 @@ __END__
 				%li{:class => (s.species == @species ? 'active' : '')}
 					%a{:href => "/samples?species=#{s.species}"}= s.species
 		%div.table-responsive
-			%table.table.table-bordered.sortable
+			%table.table.table-bordered.sortable{:style => 'table-layout: fixed'}
 				%thead
 					%tr
-						%th.sort
+						%th.sort{:style => 'width: 65px;'}
 							:plain
 								#
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th
-							:plain
-								Date
+						%th{:style => 'width: 125px;'}
+							Date
+							%span.glyphicon.glyphicon-chevron-up.pull-right
+						%th{:style => 'width: 180px;'}
+							Species
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 						%th
-							:plain
-								Species
+							Notes
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th
-							:plain
-								Notes
+						%th{:style => 'width: 78px;'}
+							Latitude
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th
-							:plain
-								Latitude
-							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th
-							:plain
-								Longitude
+						%th{:style => 'width: 93px;'}
+							Longitude
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 				%tbody
 				- @samples.each do |s|
@@ -172,7 +168,7 @@ __END__
 							%a{:href => "/samples/#{s.id}"}= s.id
 						%td{'data-sortval' => s.date_collected}= s.date_collected.strftime('%b %-d, %Y')
 						%td= s.species
-						%td= s.notes
+						%td.truncate= s.notes
 						%td= s.latitude
 						%td= s.longitude
 
@@ -214,9 +210,15 @@ __END__
 				= @weather.temperatureMax.round
 				%span.temp-label= "&deg;F"
 			%p= @weather.summary
+			%p{:style => 'font-size: 11px; font-style: italic; margin-top: -10px;'}
+				Powered By 
+				%a{:href => 'http://forecast.io/', :target => '_blank'}
+					Forecast
 		- else
 			%p
 				Weather Data Unavailable
+		%h4{:style => 'margin-top: 20px; margin-bottom: 0px;'}
+			Notes:
 		%p.notes= @sample.notes
 		%a#printer.btn.btn-default{:href => '#', :onclick => 'window.print()'}
 			%span.glyphicon.glyphicon-print

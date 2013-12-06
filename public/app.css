@@ -44,8 +44,14 @@ th {
 
 .notes {
 	font-style: italic;
-	margin-top: 20px;
+	margin-top: 5px;
 	margin-bottom: 20px;
+}
+
+.truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 @media only screen and (max-width: 767px) {
