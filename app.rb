@@ -152,10 +152,10 @@ __END__
 						%th{:style => 'width: 180px;'}
 							Species
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th{:style => 'min-width: 200px;'}
+						%th.hidden-xs
 							Notes
 							%span.glyphicon.glyphicon-chevron-up.pull-right
-						%th{:style => 'width: 78px;'}
+						%th.hidden-xs{:style => 'width: 78px;'}
 							Latitude
 							%span.glyphicon.glyphicon-chevron-up.pull-right
 						%th{:style => 'width: 93px;'}
@@ -168,9 +168,9 @@ __END__
 							%a{:href => "/samples/#{s.id}"}= s.id
 						%td{'data-sortval' => s.date_collected}= s.date_collected.strftime('%b %-d, %Y')
 						%td= s.species
-						%td.truncate= s.notes
-						%td= s.latitude
-						%td= s.longitude
+						%td.truncate.hidden-xs= s.notes
+						%td.hidden-xs= s.latitude
+						%td.hidden-xs= s.longitude
 
 @@ sample_details
 %html
